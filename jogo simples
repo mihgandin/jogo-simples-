@@ -1,0 +1,95 @@
+# Importa as bibliotecas random e time
+import random
+import time
+
+# Define a classe JogoCalculadora
+class JogoCalculadora: 
+    # Define o construtor da classe
+    def __init__(self): 
+        # Inicializa a pontuação como zero
+        self.pontuacao = 0
+        # Define o tempo limite para responder uma pergunta em segundos
+        self.tempo_limite = 10  
+        # Define o nível de dificuldade como 1
+        self.nivel_dificuldade = 1
+        # Define a variável jogo_ativo como True para indicar que o jogo ainda está ativo
+        self.jogo_ativo = True
+
+    # Define o método gerar_desafio para gerar um desafio aleatório
+    def gerar_desafio(self): 
+        # Escolhe uma operação aleatária entre as opções +, -, *, /
+        operacoes = ['+',  '-',  '*',  '/']
+        operacao = random.choice(operacoes)
+
+        # Gera dois números aleatórios entre 1 e 10 * o nível de dificuldade
+        num1 = random.randint(1,  10 * self.nivel_dificuldade)
+        num2 = random.randint(1,  10 * self.nivel_dificuldade)
+
+        # Evita divisão por zero
+        if operacao == '/': 
+            num2 = random.randint(1,  10 * self.nivel_dificuldade)
+
+        # Cria o desafio e calcula a resposta
+        if operacao == '+': 
+            resposta_correta = num1 + num2
+        elif operacao == '-': 
+            resposta_correta = num1 - num2
+        elif operacao == '*': 
+            resposta_correta = num1 * num2
+        else:   # divisão
+            resposta_correta = round(num1 / num2,  2)  # Divisão com 2 casas decimais
+
+        # Retorna o desafio e a resposta correta
+        return f"{num1} {operacao} {num2} = ?",  resposta_correta
+
+    # Define o método jogar para iniciar o jogo
+    def jogar(self): 
+        # Enquanto o jogo estiver ativo
+        while self.jogo_ativo: 
+            # Exibe o nível atual, a pontuação e o desafio
+            print(f"\nNivel {self.nivel_dificuldade}")
+            print(f"Pontuacao:  {self.pontuacao}")
+
+            # Gera um desafio aleatório
+            desafio,  resposta_correta = self.gerar_desafio()
+            print(desafio)
+
+            # Inicia o cronômetro
+            start_time = time.time()
+            # Aguarda a resposta do usuário
+            resposta_usuario = input(f"Digite sua resposta:  ")
+
+            # Verifica o tempo de resposta
+            tempo_decorrido = time.time() - start_time
+            if tempo_decorrido > self.tempo_limite: 
+                # Se o tempo de resposta exceder o limite, o usuário perde o jogo
+                print("Tempo esgotado! Voce perdeu.")
+                self.jogo_ativo = False
+                break
+
+            # Verifica se a resposta do usuário é válida
+            try: 
+                # Se a resposta for válida, compara com a resposta correta
+                if float(resposta_usuario) == resposta_correta: 
+                    # Se a resposta for correta, aumenta a pontuação e o nível de dificuldade
+                    self.pontuacao += 10  
+                    print(f"Resposta correta! Pontuacao:  {self.pontuacao}")
+                    self.nivel_dificuldade += 1  
+                else: 
+                    # Se a resposta for errada, o usuário perde o jogo
+                    print(f"Resposta incorreta. A resposta correta era:  {resposta_correta}")
+                    self.jogo_ativo = False
+            except ValueError: 
+                # Se a resposta for inválida, o usuário perde o jogo
+                print("Entrada invalida! Por favor,  insira um numero.")
+                self.jogo_ativo = False
+
+        # Exibe a pontuação final do usuário
+        print(f"Fim de jogo! Sua pontuacao final foi:  {self.pontuacao}")
+
+# Inicia o jogo
+if __name__ == "__main__": 
+    # Cria um objeto da classe JogoCalculadora
+    jogo = JogoCalculadora()
+    # Inicia o jogo
+    jogo.jogar()
